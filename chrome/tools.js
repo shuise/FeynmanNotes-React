@@ -1,4 +1,4 @@
-window.CRS = {};
+const CRS = {};
 
 CRS.templateCache = {};
 CRS.components = {};
@@ -471,3 +471,5 @@ CRS.print = function (obj) {
   newWindow.print();
   newWindow.close();
 };
+
+export default CRS;
