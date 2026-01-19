@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>exports</title>
+</head>
+<body>
+
+<pre>
+contentId = location.search //17a24258-c803-4637-960e-db5032675a9a
+get: https://flowus.cn/api/docs/{contentId}
+获取 spaceId、blocks、conments
+
+get: https://flowus.cn/api/spaces/{spaceId}/root
+获取：userlist	
+</pre>	
+
+<div>
+导出页面：<a href="https://flowus.cn/deep-reading/17a24258-c803-4637-960e-db5032675a9a">https://flowus.cn/deep-reading/17a24258-c803-4637-960e-db5032675a9a</a>	
+</div>	
+
+<hr>
+
+<div id="content">
+	<div class="feynote-main">
+		<div class="feynote-item">
+			<div class="feynote-item-remark" v-if="discussions[pageDiscussionId].comments.length > 0">
+				<template v-for="(cId, index2) in discussions[pageDiscussionId].comments">
+					<div>@{{ users[comments[cId].createdBy].nickname }}: <span v-html="blockRender(comments[cId].text || [])"></span><div>
+				</template>
+			</div>
+		</div>
+
+		<div class="feynote-item" v-for="(id, index) in nodes" :key="index">
+			<div class="feynote-item-content">
+				<div v-html="blockRender((blocks[id].data || {}).segments || [])"></div>
+			</div>
+			<div class="feynote-item-remark" v-if="getDiscussList(blocks[id]).length > 0">
+				<template v-for="(discussId, index2) in getDiscussList(blocks[id])">
+					<template v-for="(cId) in discussions[discussId].comments">
+						<div>@{{ users[comments[cId].createdBy].nickname }}: <span v-html="blockRender(comments[cId].text || [])"></span><div>
+					</template>
+				</template>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script src="./content.json"></script>
+<script src="./root.json"></script>
+<script src="../libs/vue-2.6.10.js"></script>
+<script>
+//spaceInfo, content
+function exportFlowus(){
+	var pageId = '17a24258-c803-4637-960e-db5032675a9a';
+	var users = spaceInfo.data.users; //{key:user}
+	var blocks = content.data.blocks;
+	var comments = content.data.comments;
+	var discussions = content.data.discussions;
+	var nodes = blocks[pageId].subNodes;
+	var pageDiscussionId = (blocks[pageId].discussions || [])[0];
+	console.log({users, blocks, comments, discussions, nodes});
+
+
+	new Vue({
+		el: '#content',
+		data: function(){
+			return {
+				nodes, pageDiscussionId,
+				users, blocks, comments, discussions
+			}
+		},
+		methods: {
+			blockRender: function(texts){
+				// console.log(blockData.data.segments)
+				var words = []
+				texts.forEach(function(item, index){
+					console.log(item, item.text, item.type)
+					var t = item.text;
+					words.push(t);
+				})
+				return words.join('');
+			},
+			getDiscussList: function(blockData){
+				let segments = (blockData.data || {}).segments || [];
+				let discussIds = [];
+				let exsitMap = {};
+				segments.forEach(function(item, index){
+					let discussions = item.discussions || [];
+					discussions.forEach(function(id){
+						if(!exsitMap[id]){
+							discussIds.push(id);
+							exsitMap[id] = 1;	
+						}
+						// console.log(id);
+					})
+				})
+				// console.log(discussIds);
+				return discussIds;
+			}
+		}
+	});
+}	
+exportFlowus();
+</script>
+
+
+<div>
+<button onclick="exportFlowus()">导出（内容 + 评论）</button>	
+</div>
+</body>
+</html>
