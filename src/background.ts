@@ -167,13 +167,15 @@ const feynmanRequestServer = function (params: FeynmanRequestParams, callback: R
 };
 
 //接受创建请求
-chrome.extension.onRequest.addListener(function (request: FeynmanRequestParams, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) {
+chrome.runtime.onMessage.addListener(function (request: FeynmanRequestParams, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void) {
+  console.log('onMessage', request, sender);
   if (request.type == "request") {
     feynmanRequestServer(request, function (err: any, res: FeynmanResponse) {
       res = res || {};
       // console.log('back', res, request, sender);
       sendResponse(res);
     });
+    return true; // 保持消息通道开放，等待异步响应
   }
   if (request.type == "setCookie") {
     let expirationDate = new Date().getTime() / 1000 + 30 * 24 * 60 * 60;
@@ -192,6 +194,7 @@ chrome.extension.onRequest.addListener(function (request: FeynmanRequestParams, 
         sendResponse(request);
       },
     );
+    return true; // 保持消息通道开放，等待异步响应
   }
   if (request.type == "getCookie") {
     let key = request.name;
@@ -205,32 +208,18 @@ chrome.extension.onRequest.addListener(function (request: FeynmanRequestParams, 
         sendResponse(cookie || {});
       },
     );
+    return true; // 保持消息通道开放，等待异步响应
   }
+  return true;
 });
 
 chrome.runtime.onInstalled.addListener(async (details: chrome.runtime.InstalledDetails) => {
-  chrome.contextMenus.create({
-    title: "checkbox",
-    type: "checkbox",
-    id: "checkbox",
-  });
-});
-
-chrome.contextMenus.onClicked.addListener((item: chrome.contextMenus.OnClickData, tab: chrome.tabs.Tab | undefined) => {
-  if (tab) {
-    chrome.runtime.sendMessage(
-      {
-        type: "getCookie",
-        name: "userInfo",
-      },
-      function (cookie: any) {
-        cookie = cookie || {};
-        const userInfo = JSON.parse(cookie.value || "{}");
-        const account = userInfo.account;
-        const tag = item.selectionText;
-        const url = new URL(`https://notes.bluetech.top/public/home.html?user=${account}&topic=${tag}`);
-        chrome.tabs.create({ url: url.href, index: tab.index + 1 });
-      },
-    );
+  // Check if chrome.contextMenus is available before calling create
+  if (chrome.contextMenus) {
+    chrome.contextMenus.create({
+      title: "checkbox",
+      type: "checkbox",
+      id: "checkbox",
+    });
   }
 });

@@ -79,14 +79,256 @@ interface NotesProps {
   onTransPanel?: (type?: string) => void;
 }
 
+
+const md5 = (function () {
+    'use strict';
+    function safe_add(x, y) {
+        var lsw = (x & 0xFFFF) + (y & 0xFFFF),
+            msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+        return (msw << 16) | (lsw & 0xFFFF);
+    }
+
+    /*
+    * Bitwise rotate a 32-bit number to the left.
+    */
+    function bit_rol(num, cnt) {
+        return (num << cnt) | (num >>> (32 - cnt));
+    }
+
+    /*
+    * These functions implement the four basic operations the algorithm uses.
+    */
+    function md5_cmn(q, a, b, x, s, t) {
+        return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
+    }
+    function md5_ff(a, b, c, d, x, s, t) {
+        return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+    }
+    function md5_gg(a, b, c, d, x, s, t) {
+        return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+    }
+    function md5_hh(a, b, c, d, x, s, t) {
+        return md5_cmn(b ^ c ^ d, a, b, x, s, t);
+    }
+    function md5_ii(a, b, c, d, x, s, t) {
+        return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+    }
+
+    /*
+    * Calculate the MD5 of an array of little-endian words, and a bit length.
+    */
+    function binl_md5(x, len) {
+        /* append padding */
+        x[len >> 5] |= 0x80 << (len % 32);
+        x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+        var i, olda, oldb, oldc, oldd,
+            a =  1732584193,
+            b = -271733879,
+            c = -1732584194,
+            d =  271733878;
+
+        for (i = 0; i < x.length; i += 16) {
+            olda = a;
+            oldb = b;
+            oldc = c;
+            oldd = d;
+
+            a = md5_ff(a, b, c, d, x[i],       7, -680876936);
+            d = md5_ff(d, a, b, c, x[i +  1], 12, -389564586);
+            c = md5_ff(c, d, a, b, x[i +  2], 17,  606105819);
+            b = md5_ff(b, c, d, a, x[i +  3], 22, -1044525330);
+            a = md5_ff(a, b, c, d, x[i +  4],  7, -176418897);
+            d = md5_ff(d, a, b, c, x[i +  5], 12,  1200080426);
+            c = md5_ff(c, d, a, b, x[i +  6], 17, -1473231341);
+            b = md5_ff(b, c, d, a, x[i +  7], 22, -45705983);
+            a = md5_ff(a, b, c, d, x[i +  8],  7,  1770035416);
+            d = md5_ff(d, a, b, c, x[i +  9], 12, -1958414417);
+            c = md5_ff(c, d, a, b, x[i + 10], 17, -42063);
+            b = md5_ff(b, c, d, a, x[i + 11], 22, -1990404162);
+            a = md5_ff(a, b, c, d, x[i + 12],  7,  1804603682);
+            d = md5_ff(d, a, b, c, x[i + 13], 12, -40341101);
+            c = md5_ff(c, d, a, b, x[i + 14], 17, -1502002290);
+            b = md5_ff(b, c, d, a, x[i + 15], 22,  1236535329);
+
+            a = md5_gg(a, b, c, d, x[i +  1],  5, -165796510);
+            d = md5_gg(d, a, b, c, x[i +  6],  9, -1069501632);
+            c = md5_gg(c, d, a, b, x[i + 11], 14,  643717713);
+            b = md5_gg(b, c, d, a, x[i],      20, -373897302);
+            a = md5_gg(a, b, c, d, x[i +  5],  5, -701558691);
+            d = md5_gg(d, a, b, c, x[i + 10],  9,  38016083);
+            c = md5_gg(c, d, a, b, x[i + 15], 14, -660478335);
+            b = md5_gg(b, c, d, a, x[i +  4], 20, -405537848);
+            a = md5_gg(a, b, c, d, x[i +  9],  5,  568446438);
+            d = md5_gg(d, a, b, c, x[i + 14],  9, -1019803690);
+            c = md5_gg(c, d, a, b, x[i +  3], 14, -187363961);
+            b = md5_gg(b, c, d, a, x[i +  8], 20,  1163531501);
+            a = md5_gg(a, b, c, d, x[i + 13],  5, -1444681467);
+            d = md5_gg(d, a, b, c, x[i +  2],  9, -51403784);
+            c = md5_gg(c, d, a, b, x[i +  7], 14,  1735328473);
+            b = md5_gg(b, c, d, a, x[i + 12], 20, -1926607734);
+
+            a = md5_hh(a, b, c, d, x[i +  5],  4, -378558);
+            d = md5_hh(d, a, b, c, x[i +  8], 11, -2022574463);
+            c = md5_hh(c, d, a, b, x[i + 11], 16,  1839030562);
+            b = md5_hh(b, c, d, a, x[i + 14], 23, -35309556);
+            a = md5_hh(a, b, c, d, x[i +  1],  4, -1530992060);
+            d = md5_hh(d, a, b, c, x[i +  4], 11,  1272893353);
+            c = md5_hh(c, d, a, b, x[i +  7], 16, -155497632);
+            b = md5_hh(b, c, d, a, x[i + 10], 23, -1094730640);
+            a = md5_hh(a, b, c, d, x[i + 13],  4,  681279174);
+            d = md5_hh(d, a, b, c, x[i],      11, -358537222);
+            c = md5_hh(c, d, a, b, x[i +  3], 16, -722521979);
+            b = md5_hh(b, c, d, a, x[i +  6], 23,  76029189);
+            a = md5_hh(a, b, c, d, x[i +  9],  4, -640364487);
+            d = md5_hh(d, a, b, c, x[i + 12], 11, -421815835);
+            c = md5_hh(c, d, a, b, x[i + 15], 16,  530742520);
+            b = md5_hh(b, c, d, a, x[i +  2], 23, -995338651);
+
+            a = md5_ii(a, b, c, d, x[i],       6, -198630844);
+            d = md5_ii(d, a, b, c, x[i +  7], 10,  1126891415);
+            c = md5_ii(c, d, a, b, x[i + 14], 15, -1416354905);
+            b = md5_ii(b, c, d, a, x[i +  5], 21, -57434055);
+            a = md5_ii(a, b, c, d, x[i + 12],  6,  1700485571);
+            d = md5_ii(d, a, b, c, x[i +  3], 10, -1894986606);
+            c = md5_ii(c, d, a, b, x[i + 10], 15, -1051523);
+            b = md5_ii(b, c, d, a, x[i +  1], 21, -2054922799);
+            a = md5_ii(a, b, c, d, x[i +  8],  6,  1873313359);
+            d = md5_ii(d, a, b, c, x[i + 15], 10, -30611744);
+            c = md5_ii(c, d, a, b, x[i +  6], 15, -1560198380);
+            b = md5_ii(b, c, d, a, x[i + 13], 21,  1309151649);
+            a = md5_ii(a, b, c, d, x[i +  4],  6, -145523070);
+            d = md5_ii(d, a, b, c, x[i + 11], 10, -1120210379);
+            c = md5_ii(c, d, a, b, x[i +  2], 15,  718787259);
+            b = md5_ii(b, c, d, a, x[i +  9], 21, -343485551);
+
+            a = safe_add(a, olda);
+            b = safe_add(b, oldb);
+            c = safe_add(c, oldc);
+            d = safe_add(d, oldd);
+        }
+        return [a, b, c, d];
+    }
+
+    /*
+    * Convert an array of little-endian words to a string
+    */
+    function binl2rstr(input) {
+        var i,
+            output = '';
+        for (i = 0; i < input.length * 32; i += 8) {
+            output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xFF);
+        }
+        return output;
+    }
+
+    /*
+    * Convert a raw string to an array of little-endian words
+    * Characters >255 have their high-byte silently ignored.
+    */
+    function rstr2binl(input) {
+        var i,
+            output = [];
+        output[(input.length >> 2) - 1] = undefined;
+        for (i = 0; i < output.length; i += 1) {
+            output[i] = 0;
+        }
+        for (i = 0; i < input.length * 8; i += 8) {
+            output[i >> 5] |= (input.charCodeAt(i / 8) & 0xFF) << (i % 32);
+        }
+        return output;
+    }
+
+    /*
+    * Calculate the MD5 of a raw string
+    */
+    function rstr_md5(s) {
+        return binl2rstr(binl_md5(rstr2binl(s), s.length * 8));
+    }
+
+    /*
+    * Calculate the HMAC-MD5, of a key and some data (raw strings)
+    */
+    function rstr_hmac_md5(key, data) {
+        var i,
+            bkey = rstr2binl(key),
+            ipad = [],
+            opad = [],
+            hash;
+        ipad[15] = opad[15] = undefined;
+        if (bkey.length > 16) {
+            bkey = binl_md5(bkey, key.length * 8);
+        }
+        for (i = 0; i < 16; i += 1) {
+            ipad[i] = bkey[i] ^ 0x36363636;
+            opad[i] = bkey[i] ^ 0x5C5C5C5C;
+        }
+        hash = binl_md5(ipad.concat(rstr2binl(data)), 512 + data.length * 8);
+        return binl2rstr(binl_md5(opad.concat(hash), 512 + 128));
+    }
+
+    /*
+    * Convert a raw string to a hex string
+    */
+    function rstr2hex(input) {
+        var hex_tab = '0123456789abcdef',
+            output = '',
+            x,
+            i;
+        for (i = 0; i < input.length; i += 1) {
+            x = input.charCodeAt(i);
+            output += hex_tab.charAt((x >>> 4) & 0x0F) +
+                hex_tab.charAt(x & 0x0F);
+        }
+        return output;
+    }
+
+    /*
+    * Encode a string as utf-8
+    */
+    function str2rstr_utf8(input) {
+        return unescape(encodeURIComponent(input));
+    }
+
+    /*
+    * Take string arguments and return either raw or hex encoded strings
+    */
+    function raw_md5(s) {
+        return rstr_md5(str2rstr_utf8(s));
+    }
+    function hex_md5(s) {
+        return rstr2hex(raw_md5(s));
+    }
+    function raw_hmac_md5(k, d) {
+        return rstr_hmac_md5(str2rstr_utf8(k), str2rstr_utf8(d));
+    }
+    function hex_hmac_md5(k, d) {
+        return rstr2hex(raw_hmac_md5(k, d));
+    }
+
+    function md5(string, key, raw) {
+        if (!key) {
+            if (!raw) {
+                return hex_md5(string);
+            }
+            return raw_md5(string);
+        }
+        if (!raw) {
+            return hex_hmac_md5(key, string);
+        }
+        return raw_hmac_md5(key, string);
+    }
+    return md5;
+}());
+
+
 function feynmanRequest(data: any, callback: (response: any) => void) {
   //发送创建请求
+  console.log('feynmanRequest', data);
   chrome.runtime.sendMessage(data, function (response) {
     callback(response);
   });
 }
-
-var md5 = require("blueimp-md5");
   
 const Notes: React.FC<NotesProps> = (props) => {
   const { feynType: propsFeynType, onTransPanel: propsTransPanel } = props;
@@ -94,14 +336,19 @@ const Notes: React.FC<NotesProps> = (props) => {
   // 状态管理
   const [feynType, setFeynType] = useState<'close' | 'feynote' | 'weread' | 'linkrs'>(propsFeynType || 'feynote');
   const [isSharing, setIsSharing] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
   const [saved, setSaved] = useState(false);
+  
+  // 从本地存储读取 token 和用户信息
+  const initialUserInfo = JSON.parse(localStorage.getItem('user') || '{}') as UserInfo;
+  const initialToken = localStorage.getItem('token') || '';
+  
   const [userInfo, setUserInfo] = useState<UserInfo>({
-    account: '',
+    account: initialUserInfo.account || '',
     psw: '',
-    password: ''
+    password: initialUserInfo.password || ''
   });
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState(initialToken);
+  const [isLogin, setIsLogin] = useState(initialToken !== "");
   const [topics, setTopics] = useState<Topic[]>([]);
   const [pageId, setPageId] = useState('');
   const [articles, setArticles] = useState<ArticleItem[]>([]);
@@ -111,7 +358,7 @@ const Notes: React.FC<NotesProps> = (props) => {
     title: '',
     titleEdit: 0,
     topicIds: [],
-    banner: '',
+    banner: 'https://notes.bluetech.top/proxy?url=https://notes.bluetech.top/libs/covers/3.png',
     originUrl: '',
     public: 1,
     uniqueId: ''
@@ -175,20 +422,350 @@ const Notes: React.FC<NotesProps> = (props) => {
     });
   };
 
-  const createCard = (note: Note) => {
+  // 获取页面标题
+  const getTitle = () => {
+    if (location.host.indexOf(".dedao.cn") > -1) {
+      let obj = document.querySelector(".audio-title") || {};
+      return (obj as HTMLElement).innerText || "";
+    }
+    if (location.host.indexOf(".feishu.cn") > -1) {
+      let obj = document.querySelector(".op-symbol") || {};
+      return (obj as HTMLElement).innerText || "";
+    }
+    if (location.host.indexOf("notion.so") > -1) {
+      let obj = document.querySelector(".notion-topbar .notranslate") || {};
+      return (obj as HTMLElement).innerText || "";
+    }
+
+    let h1 = document.querySelector("h1") || {};
+    let h2 = document.querySelector("h2") || {};
+    let h3 = document.querySelector("h3") || {};
+    let title = (h1 as HTMLElement).innerText || (h2 as HTMLElement).innerText || (h3 as HTMLElement).innerText;
+    title = document.title || title || document.body.innerText;
+
+    // title 需要不变，才能提供唯一的连续识别依赖。
+    title = title.substr(0, 200);
+    title = title.split("#").join("");
+    title = title.split("“").join("");
+    title = title.split("”").join("");
+
+    return title;
+  };
+
+  // 从云端获取笔记
+  const initPagenoteFormCloud = (callback: (data?: any) => void) => {
+    let title = getTitle();
+    let host = location.host;
+    let uniqueId = md5(title + host);
+    console.log("Article.info", host + "-" + uniqueId + "-" + title);
+
+    feynmanRequest(
+      {
+        api: "Article.notes",
+        type: "request",
+        token: token,
+        data: {
+          uniqueId: uniqueId,
+        },
+      },
+      function (res) {
+        console.log("Article.notes uniqueId", uniqueId);
+        console.log("Article.notes", res);
+        let data = res.data || {};
+        let notes = data.paragraphs || [];
+
+        let extra = data.extra || "{}";
+        extra = JSON.parse(extra);
+        extra.steps = extra.steps || [];
+
+        // 与本地合并
+        let pageId = md5(location.href);
+        let isSamePage = extra.pageId == pageId;
+
+        // 从本地存储获取数据
+        let dataCache = JSON.parse(localStorage.getItem(pageId) || "{}");
+        let stepsCache = dataCache.steps || [];
+
+        if (isSamePage && extra.steps.length > 0 && stepsCache.length > 0) {
+          // 合并笔记
+          let noteMap: { [key: string]: any } = {};
+          extra.steps.forEach((item: any) => {
+            let key = md5(item.text);
+            noteMap[key] = item;
+          });
+          
+          stepsCache.forEach((item: any) => {
+            let key = md5(item.text);
+            if (!noteMap[key]) {
+              extra.steps.push(item);
+            }
+          });
+          
+          notes.forEach((item: any) => {
+            let key = md5(item.note);
+            if (noteMap[key]) {
+              let isModified = new Date(item.updatedAt).getTime() > noteMap[key]["time"];
+              if (isModified) {
+                noteMap[key]["tip"] = item.summary;
+              }
+            }
+          });
+        }
+
+        callback(data);
+      },
+    );
+  };
+
+  // 初始化笔记工具
+  const initPagenote = (extra: any) => {
+    let pageId = md5(location.href, '', '');
+    if(typeof extra === 'string') {
+      extra = JSON.parse(extra);
+    }
+    extra = extra || {};
+    extra.steps = extra.steps || [];
+
+    // 从本地存储获取数据
+    let data = JSON.parse(localStorage.getItem(pageId) || "{}");
+    if (extra.steps.length > 0) {
+      data = extra;
+    }
+    
+    // 设置 pageId
+    setPageId(pageId);
+    
+    // 更新 article 信息
+    setArticle(prev => ({
+      ...prev,
+      title: getTitle(),
+      originUrl: location.href
+    }));
+
+    // 更新笔记列表
+    setNotes(data.steps || []);
+
+    // 如果支持 PageNote SDK，则初始化
+    if (window.PageNote && !window.pagenote) {
+      window.pagenote = new window.PageNote("Feynman", {
+        functionColors: [
+          // 支持扩展的功能按钮区，
+        ],
+        categories: [],
+        brushes: [
+          // 画笔
+          {
+            bg: "#FF6900", // rgb 颜色值
+            shortcut: "p", // 快捷键，可选
+            label: "一级画笔", // 说明
+            level: 1, // 暂不支持
+          },
+        ],
+        showBarTimeout: 0, // 延迟功能时间 单位毫秒
+        renderAnnotation: function (data: any, light: any) {
+          // 自定义笔记渲染逻辑
+          const element = document.createElement("div");
+          const { tip, lightId, time } = data;
+          const aside = document.createElement("div");
+          aside.innerHTML = `<pagenote-block aria-controls="aside-info">
+            ${new Date(time).toLocaleDateString()}
+            </pagenote-block>`;
+          element.appendChild(aside);
+
+          element.ondblclick = function () {
+            light.openEditor();
+          };
+
+          const asides: any[] = [];
+          return [null, asides];
+        },
+        debug: false,
+        enableMarkImg: true,
+      });
+
+      // 初始化 PageNote
+      window.pagenote.init(data);
+
+      // 添加监听器
+      window.pagenote.addListener(function (status: any) {
+        console.log("pagenote", status);
+        let steps = window.pagenote.plainData.steps || [];
+        let isSameCount = steps.length == notes.length;
+
+        if (status === window.pagenote.CONSTANT.SYNCED) {
+          // 更新笔记列表
+          setNotes(steps);
+          
+          // 保存到本地存储
+          localStorage.setItem(pageId, JSON.stringify(window.pagenote.plainData));
+        }
+      });
+    }
+  };
+
+  // 刷新笔记列表
+  const notesRefresh = (data: any) => {
+    setNotes(data.steps || []);
+  };
+
+  // 保存笔记到服务器
+  const noteSaveToServer = (callback: () => void) => {
+    // 实现保存笔记到服务器的逻辑
+    console.log("noteSaveToServer called");
+    callback();
+  };
+
+  // 页面加载时从云端恢复笔记
+  useEffect(() => {
+    // 只有登录用户才从云端恢复笔记
+    if (token) {
+      initPagenoteFormCloud((data) => {
+        initPagenote(data?.extra);
+      });
+    } else {
+      // 未登录用户从本地存储恢复笔记
+      initPagenote();
+    }
+  }, [token]);
+
+  const downloadArticle = () => {
     // Implementation from original feynman.js
+    var documentClone = document.cloneNode(true);
+    // @ts-ignore
+    var articleData = new Readability(documentClone).parse();
+    let html = articleData.content;
+    // @ts-ignore
+    let md = html2md(html);
+    md += `
+
+ 来源：${location.href} 
+
+`;
+
+    let zkCard = new Date().getTime();
+    let fileName = articleData.title || zkCard;
+    fileName = fileName + ".md";
+    let file = new File([md], fileName, { type: "text/plain" });
+    let objectUrl = URL.createObjectURL(file);
+    
+    const downIframe = document.createElement("iframe");
+    downIframe.id = downIframe.name = "f_downIframe";
+    const tmpLink = document.createElement("a");
+    tmpLink.href = objectUrl;
+    tmpLink.target = "f_downIframe";
+    tmpLink.download = fileName;
+    document.body.appendChild(tmpLink);
+    tmpLink.click();
+
+    document.body.removeChild(tmpLink);
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  const createMD = () => {
+    // Implementation from original feynman.js
+    let tpls = {
+      article: `# {title} 
+
+ 原文：{originUrl} 
+`,
+      banner: `
+ ![]({banner} "") 
+
+`,
+      topics: "[[{topic}]]",
+      notes: `
+
+ {text} 
+ > {tip}`
+    };
+
+    let md = tpls.article
+      .replace(/{title}/g, article.title)
+      .replace(/{originUrl}/g, article.originUrl);
+
+    let topics = [];
+    let tagMap = {};
+    if (topics.length > 1) {
+      md += "\n";
+      topics.forEach((item: string) => {
+        if (!tagMap[item]) {
+          tagMap[item] = item;
+          md += `[[${item}]] `;
+        }
+      });
+    }
+
+    if (article.banner) {
+      md += tpls.banner.replace(/{banner}/g, article.banner);
+    }
+
+    notes.forEach((item: Note) => {
+      md += `
+
+ ${item.text}`;
+      if (item.tip) {
+        md += `
+ > ${item.tip || ""}`;
+      }
+    });
+
+    md += "\n\n\n";
+    return md;
   };
 
   const downloadNotes = () => {
     // Implementation from original feynman.js
-  };
+    let md = createMD();
 
-  const downloadArticle = () => {
-    // Implementation from original feynman.js
+    if (notes.length === 0) {
+      console.log('无笔记数据');
+      return;
+    }
+
+    let zkCard = new Date().getTime();
+    let fileName = article.title || zkCard;
+    fileName = fileName + "-笔记.md";
+    let file = new File([md], fileName, { type: "text/plain" });
+    let objectUrl = URL.createObjectURL(file);
+    
+    const downIframe = document.createElement("iframe");
+    downIframe.id = downIframe.name = "f_downIframe";
+    const tmpLink = document.createElement("a");
+    tmpLink.href = objectUrl;
+    tmpLink.target = "f_downIframe";
+    tmpLink.download = fileName;
+    document.body.appendChild(tmpLink);
+    tmpLink.click();
+
+    document.body.removeChild(tmpLink);
+    URL.revokeObjectURL(objectUrl);
   };
 
   const searchBooks = () => {
     // Implementation from original feynman.js
+    var content = document.body.innerText;
+    var pat = new RegExp("《([^《|》]*)》", "g");
+
+    var results = {};
+    var res;
+    do {
+      res = pat.exec(content);
+      if (res) {
+        results[res[1]] = res[1];
+      }
+    } while (res);
+
+    var names = [];
+    for (var name in results) {
+      window.open("https://search.douban.com/book/subject_search?search_text=" + name + "&cat=1001");
+    }
+  };
+
+  const createCard = (note: Note) => {
+    // Implementation from original feynman.js
+    console.log('createCard', note);
+    // This function would typically open a card creation interface
+    // For now, we'll just log the note
   };
 
   const createPublicLinkPop = () => {
@@ -223,28 +800,6 @@ const Notes: React.FC<NotesProps> = (props) => {
     document.getElementsByTagName('body')[0].style.paddingRight = `${w}px`;
   };
 
-  const getOneNote = (item: ArticleItem) => {
-    const extra = JSON.parse(item.extra || '"{}"');
-    const steps = extra.steps || [];
-    let note = {} as Note;
-    steps.forEach((_note: Note) => {
-      if (_note.tip) {
-        note = _note;
-      }
-    });
-    if (!note.tip) {
-      note = steps[0];
-    }
-    return note || { text: '', tip: '', images: [], x: 0, y: 0, time: 0 };
-  };
-
-  const setCardStyle = (styleType: string) => {
-    setCard(prev => ({
-      ...prev,
-      status: '',
-      styleType
-    }));
-  };
 
   const createPublicLink = () => {
     // Implementation from original feynman.js
@@ -286,6 +841,7 @@ const Notes: React.FC<NotesProps> = (props) => {
   };
 
   const userLoginSubmit = async () => {
+    console.log('userLoginSubmit', userInfo)
     // Implementation from original feynman.js
     const { account, psw } = userInfo;
     
@@ -309,7 +865,7 @@ const Notes: React.FC<NotesProps> = (props) => {
     }
     
     // Hash the password using the implemented md5 function
-    const hashedPassword = await md5(psw);
+    const hashedPassword = md5(psw, '', '');
     
     // Update userInfo with hashed password
     const loginUserInfo = {
@@ -321,17 +877,18 @@ const Notes: React.FC<NotesProps> = (props) => {
     feynmanRequest({
       type: "request",
       data: loginUserInfo,
-      url: "UserLogin"
+      api: "User.login"
     }, function(res) {
       if (res.code === "0") {
+        console.log('登录成功', res);
         // Login successful
-        setToken(res.token);
+        setToken(res?.data?.token);
         setUserInfo(loginUserInfo);
         setIsLogin(false);
         
         // Save user info to localStorage
         localStorage.setItem("user", JSON.stringify(loginUserInfo));
-        localStorage.setItem("token", res.token);
+        localStorage.setItem("token", res?.data?.token || '');
       } else {
         // Login failed
         alert(res.msg || '登录失败，请检查用户名和密码');
@@ -432,74 +989,6 @@ const Notes: React.FC<NotesProps> = (props) => {
 				</>
 			)}
 
-			{feynType === 'weread' && (
-				<>
-					<div className="feynote-header">
-						<h2>
-							{userInfo.account && (
-								<a
-									target="_blank"
-									href={`https://notes.bluetech.top/public/home.html?user=${userInfo.account}`}
-								>
-									{userInfo.account}
-								</a>
-							)}
-							完读书籍
-						</h2>
-					</div>
-					<div className="feynote-foot">
-						{token && (
-							<a href="http://notes.bluetech.top/public/index.html" target="_blank">管理</a>
-						)}
-						{token && (
-							<span className="feynote-btn" onClick={logout}>
-								退出
-							</span>
-						)}
-						<span className="feynote-btn" onClick={() => transPanel('close')}>
-							关闭
-						</span>
-					</div>
-				</>
-			)}
-
-			{feynType === 'linkrs' && (
-				<>
-					<div className="feynote-header">
-						<h2>可用文章</h2>
-					</div>
-					<div className="feynote-main">
-						{articles.map((item, index) => {
-							const note = getOneNote(item);
-							return (
-								<div key={index} className="feynote-item">
-									<div className="feynote-item-content" style={{ textIndent: 0 }}>
-										<a href={item.originUrl} target="_blank">
-											{item.title}
-										</a>
-									</div>
-									<div className="feynote-item-content" style={{ textIndent: 0 }}>
-										{note.text}
-									</div>
-									{note.tip && (
-										<div className="feynote-item-remark">
-											{note.tip}
-										</div>
-									)}
-								</div>
-							);
-						})}
-					</div>
-					<div className="feynote-foot">
-						{token && (
-							<a href="http://notes.bluetech.top/public/index.html" target="_blank">管理</a>
-						)}
-						<span className="feynote-btn" onClick={() => transPanel('close')}>
-							关闭
-						</span>
-					</div>
-				</>
-			)}
 
       {/* Save Success Message */}
       {saved && (
@@ -590,13 +1079,12 @@ const Notes: React.FC<NotesProps> = (props) => {
               placeholder="密码"
               value={userInfo.psw}
               onChange={(e) => setUserInfo(prev => ({ ...prev, psw: e.target.value }))}
-              onBlur={userLoginSubmit}
             />
           </div>
           <div className="feynote-tags">
-            <span className="feynote-button" onClick={userLoginSubmit}>
-              登录
-            </span>
+            <a className="feynote-button" onClick={userLoginSubmit}>
+              登录-
+            </a>
             <a href="https://notes.bluetech.top/public/index.html" target="_blank">注册</a>
             <span onClick={() => setIsLogin(false)}>取消</span>
           </div>
