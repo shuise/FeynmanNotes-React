@@ -1,13 +1,20 @@
+import "./index.css"
+
 function IndexPopup() {
   return (
-    <div style={{ width: "300px", padding: "20px" }}>
+    <div className="w-[300px] p-5">
       <img 
         src="https://notes.bluetech.top/website/Feynman.jpg" 
         alt="Feynman" 
-        style={{ width: "300px" }} 
+        className="w-[300px]" 
       />
-      <h1 style={{ fontSize: "16px", textAlign: "center" }}>
-        <a href="https://notes.bluetech.top/" target="_blank" rel="noopener noreferrer">
+      <h1 className="text-base text-center">
+        <a 
+          href="https://notes.bluetech.top/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
           安装笔记工具
         </a>，
         像费曼一样思考、分享

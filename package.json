@@ -1,8 +1,8 @@
 {
-  "name": "meta-y",
-  "displayName": "MetaY.ai",
+  "name": "feynman-notes",
+  "displayName": "费曼笔记",
   "version": "0.0.1",
-  "description": "MetaY.ai mining extension",
+  "description": "费曼笔记 - 笔记并不是思考的过程，笔记就是思考本身",
   "author": "Blockfish",
   "scripts": {
     "dev": "plasmo dev --verbose",
@@ -40,8 +40,19 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
     "prettier": "3.2.4",
+    "tailwindcss": "^3.4.1",
     "typescript": "5.3.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "jiti": "1.16.0"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "plasmo": {
     "permissions": [

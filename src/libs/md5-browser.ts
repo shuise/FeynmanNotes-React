@@ -20,58 +20,58 @@
 /*jslint bitwise: true */
 /*global unescape, define, module */
 
-var md5 = (function () {
+export const md5 = (function () {
     'use strict';
 
     /*
     * Add integers, wrapping at 2^32. This uses 16-bit operations internally
     * to work around bugs in some JS interpreters.
     */
-    function safe_add(x, y) {
-        var lsw = (x & 0xFFFF) + (y & 0xFFFF),
-            msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+    function safe_add(x: number, y: number): number {
+        var lsw: number = (x & 0xFFFF) + (y & 0xFFFF),
+            msw: number = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
     }
 
     /*
     * Bitwise rotate a 32-bit number to the left.
     */
-    function bit_rol(num, cnt) {
+    function bit_rol(num: number, cnt: number): number {
         return (num << cnt) | (num >>> (32 - cnt));
     }
 
     /*
     * These functions implement the four basic operations the algorithm uses.
     */
-    function md5_cmn(q, a, b, x, s, t) {
+    function md5_cmn(q: number, a: number, b: number, x: number, s: number, t: number): number {
         return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
     }
-    function md5_ff(a, b, c, d, x, s, t) {
+    function md5_ff(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
     }
-    function md5_gg(a, b, c, d, x, s, t) {
+    function md5_gg(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
     }
-    function md5_hh(a, b, c, d, x, s, t) {
+    function md5_hh(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         return md5_cmn(b ^ c ^ d, a, b, x, s, t);
     }
-    function md5_ii(a, b, c, d, x, s, t) {
+    function md5_ii(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
     }
 
     /*
     * Calculate the MD5 of an array of little-endian words, and a bit length.
     */
-    function binl_md5(x, len) {
+    function binl_md5(x: number[], len: number): number[] {
         /* append padding */
         x[len >> 5] |= 0x80 << (len % 32);
         x[(((len + 64) >>> 9) << 4) + 14] = len;
 
-        var i, olda, oldb, oldc, oldd,
-            a =  1732584193,
-            b = -271733879,
-            c = -1732584194,
-            d =  271733878;
+        var i: number, olda: number, oldb: number, oldc: number, oldd: number,
+            a: number =  1732584193,
+            b: number = -271733879,
+            c: number = -1732584194,
+            d: number =  271733878;
 
         for (i = 0; i < x.length; i += 16) {
             olda = a;
@@ -158,9 +158,9 @@ var md5 = (function () {
     /*
     * Convert an array of little-endian words to a string
     */
-    function binl2rstr(input) {
-        var i,
-            output = '';
+    function binl2rstr(input: number[]): string {
+        var i: number,
+            output: string = '';
         for (i = 0; i < input.length * 32; i += 8) {
             output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xFF);
         }
@@ -171,15 +171,24 @@ var md5 = (function () {
     * Convert a raw string to an array of little-endian words
     * Characters >255 have their high-byte silently ignored.
     */
-    function rstr2binl(input) {
-        var i,
-            output = [];
-        output[(input.length >> 2) - 1] = undefined;
+    function rstr2binl(input: string): number[] {
+        var i: number,
+            output: number[] = [];
+        const length = (input.length >> 2) - 1;
+        if (length >= 0) {
+            output[length] = 0;
+        }
         for (i = 0; i < output.length; i += 1) {
-            output[i] = 0;
+            if (output[i] === undefined) {
+                output[i] = 0;
+            }
         }
         for (i = 0; i < input.length * 8; i += 8) {
-            output[i >> 5] |= (input.charCodeAt(i / 8) & 0xFF) << (i % 32);
+            const index = i >> 5;
+            if (output[index] === undefined) {
+                output[index] = 0;
+            }
+            output[index] = (output[index] || 0) | ((input.charCodeAt(i / 8) & 0xFF) << (i % 32));
         }
         return output;
     }
@@ -187,26 +196,26 @@ var md5 = (function () {
     /*
     * Calculate the MD5 of a raw string
     */
-    function rstr_md5(s) {
+    function rstr_md5(s: string): string {
         return binl2rstr(binl_md5(rstr2binl(s), s.length * 8));
     }
 
     /*
     * Calculate the HMAC-MD5, of a key and some data (raw strings)
     */
-    function rstr_hmac_md5(key, data) {
-        var i,
-            bkey = rstr2binl(key),
-            ipad = [],
-            opad = [],
-            hash;
-        ipad[15] = opad[15] = undefined;
+    function rstr_hmac_md5(key: string, data: string): string {
+        var i: number,
+            bkey: number[] = rstr2binl(key),
+            ipad: number[] = new Array(16).fill(0),
+            opad: number[] = new Array(16).fill(0),
+            hash: number[];
         if (bkey.length > 16) {
             bkey = binl_md5(bkey, key.length * 8);
         }
         for (i = 0; i < 16; i += 1) {
-            ipad[i] = bkey[i] ^ 0x36363636;
-            opad[i] = bkey[i] ^ 0x5C5C5C5C;
+            const bkeyValue = (bkey[i] || 0);
+            ipad[i] = bkeyValue ^ 0x36363636;
+            opad[i] = bkeyValue ^ 0x5C5C5C5C;
         }
         hash = binl_md5(ipad.concat(rstr2binl(data)), 512 + data.length * 8);
         return binl2rstr(binl_md5(opad.concat(hash), 512 + 128));
@@ -215,11 +224,11 @@ var md5 = (function () {
     /*
     * Convert a raw string to a hex string
     */
-    function rstr2hex(input) {
-        var hex_tab = '0123456789abcdef',
-            output = '',
-            x,
-            i;
+    function rstr2hex(input: string): string {
+        var hex_tab: string = '0123456789abcdef',
+            output: string = '',
+            x: number,
+            i: number;
         for (i = 0; i < input.length; i += 1) {
             x = input.charCodeAt(i);
             output += hex_tab.charAt((x >>> 4) & 0x0F) +
@@ -231,27 +240,27 @@ var md5 = (function () {
     /*
     * Encode a string as utf-8
     */
-    function str2rstr_utf8(input) {
+    function str2rstr_utf8(input: string): string {
         return unescape(encodeURIComponent(input));
     }
 
     /*
     * Take string arguments and return either raw or hex encoded strings
     */
-    function raw_md5(s) {
+    function raw_md5(s: string): string {
         return rstr_md5(str2rstr_utf8(s));
     }
-    function hex_md5(s) {
+    function hex_md5(s: string): string {
         return rstr2hex(raw_md5(s));
     }
-    function raw_hmac_md5(k, d) {
+    function raw_hmac_md5(k: string, d: string): string {
         return rstr_hmac_md5(str2rstr_utf8(k), str2rstr_utf8(d));
     }
-    function hex_hmac_md5(k, d) {
+    function hex_hmac_md5(k: string, d: string): string {
         return rstr2hex(raw_hmac_md5(k, d));
     }
 
-    function md5(string, key, raw) {
+    function md5(string: string, key?: string, raw?: boolean): string {
         if (!key) {
             if (!raw) {
                 return hex_md5(string);
