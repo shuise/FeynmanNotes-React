@@ -26,6 +26,9 @@ export interface Article {
   originUrl: string;
   public: number;
   uniqueId: string;
+  account?: string;
+  extra?: string;
+  tagIds?: string[];
 }
 
 // UserInfo 类型
@@ -33,6 +36,7 @@ export interface UserInfo {
   account: string;
   psw: string;
   password: string;
+  token?: string;
 }
 
 // Topic 类型
@@ -69,6 +73,8 @@ export interface Book {
   book: {
     title: string;
     author: string;
+    bookId?: string;
+    cover?: string;
   };
   noteCount: number;
   bookId: string;
@@ -76,6 +82,7 @@ export interface Book {
 
 // ArticleItem 类型
 export interface ArticleItem {
+  id?: string;
   originUrl: string;
   title: string;
   extra: string;

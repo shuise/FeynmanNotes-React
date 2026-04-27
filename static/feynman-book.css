@@ -1,0 +1,202 @@
+.Feynman-book {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+.Feynman-book {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    font-family: "Helvetica Neue", Helvetica, Arial, 'Segoe UI Emoji', sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+    min-width: 650px;
+}
+
+/*.Feynman-book a {
+    color: #4183C4;
+}*/
+.Feynman-book h1,
+.Feynman-book h2,
+.Feynman-book h3,
+.Feynman-book h4,
+.Feynman-book h5,
+.Feynman-book h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+.Feynman-book h1:hover a.anchor,
+.Feynman-book h2:hover a.anchor,
+.Feynman-book h3:hover a.anchor,
+.Feynman-book h4:hover a.anchor,
+.Feynman-book h5:hover a.anchor,
+.Feynman-book h6:hover a.anchor {
+    text-decoration: none;
+}
+.Feynman-book h1 tt,
+.Feynman-book h1 code {
+    font-size: inherit;
+}
+.Feynman-book h2 tt,
+.Feynman-book h2 code {
+    font-size: inherit;
+}
+.Feynman-book h3 tt,
+.Feynman-book h3 code {
+    font-size: inherit;
+}
+.Feynman-book h4 tt,
+.Feynman-book h4 code {
+    font-size: inherit;
+}
+.Feynman-book h5 tt,
+.Feynman-book h5 code {
+    font-size: inherit;
+}
+.Feynman-book h6 tt,
+.Feynman-book h6 code {
+    font-size: inherit;
+}
+.Feynman-book h1 {
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+.Feynman-book h2 {
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+/*@media print {
+    .typora-export h1,
+    .typora-export h2 {
+        border-bottom: none;
+        padding-bottom: initial;
+    }
+
+    .typora-export h1::after,
+    .typora-export h2::after {
+        content: "";
+        display: block;
+        height: 100px;
+        margin-top: -96px;
+        border-top: 1px solid #eee;
+    }
+}*/
+
+.Feynman-book h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+.Feynman-book h4 {
+    font-size: 1.25em;
+}
+.Feynman-book h5 {
+    font-size: 1em;
+}
+.Feynman-book h6 {
+   font-size: 1em;
+    color: #777;
+}
+.Feynman-book p,
+.Feynman-book blockquote,
+.Feynman-book ul,
+.Feynman-book ol,
+.Feynman-book dl,
+.Feynman-book table{
+    margin: 1em;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    padding: 10px;
+}
+.Feynman-book p:hover{
+	background-color: #fff;
+}
+.Feynman-book li>ol,
+.Feynman-book li>ul {
+    margin: 0 0;
+}
+.Feynman-book hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+.Feynman-book li p.first {
+    display: inline-block;
+}
+.Feynman-book ul,
+.Feynman-book ol {
+    padding-left: 30px;
+}
+.Feynman-book ul:first-child,
+.Feynman-book ol:first-child {
+    margin-top: 0;
+}
+.Feynman-book ul:last-child,
+.Feynman-book ol:last-child {
+    margin-bottom: 0;
+}
+.Feynman-book blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+.Feynman-book blockquote blockquote {
+    padding-right: 0;
+}
+.Feynman-book table {
+    padding: 0;
+    word-break: initial;
+}
+.Feynman-book table tr {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+.Feynman-book table tr:nth-child(2n),
+.Feynman-book thead {
+    background-color: #f8f8f8;
+}
+.Feynman-book table th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 13px;
+}
+.Feynman-book table td {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 6px 13px;
+}
+.Feynman-book table th:first-child,
+.Feynman-book table td:first-child {
+    margin-top: 0;
+}
+.Feynman-book table th:last-child,
+.Feynman-book table td:last-child {
+    margin-bottom: 0;
+}
+
+.Feynman-book code,
+.Feynman-book tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+.Feynman-book code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}

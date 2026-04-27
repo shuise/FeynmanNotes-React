@@ -496,3 +496,11 @@ var QRCode;
 	 */
 	QRCode.CorrectLevel = QRErrorCorrectLevel;
 })();
+
+if (typeof globalThis !== "undefined") {
+	globalThis.QRCode = QRCode;
+}
+
+if (typeof module === "object") {
+	module.exports = QRCode;
+}

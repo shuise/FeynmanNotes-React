@@ -3,6 +3,7 @@ import type { FooterButtonsProps, Note } from '../types';
 
 // 直接导入工具函数，避免模块解析问题
 import * as tools from '../utils/tools';
+import { Readability } from "../vendor/content-libs"
 
 const FooterButtons: React.FC<FooterButtonsProps> = ({
   article,
@@ -26,8 +27,10 @@ const FooterButtons: React.FC<FooterButtonsProps> = ({
   const downloadArticle = () => {
     // Implementation from original feynman.js
     var documentClone = document.cloneNode(true);
-    // @ts-ignore
-    var articleData = new Readability(documentClone).parse();
+    var articleData = new Readability(documentClone as Document).parse();
+    if (!articleData) {
+      return;
+    }
     let html = articleData.content;
     // @ts-ignore
     let md = html2md(html);

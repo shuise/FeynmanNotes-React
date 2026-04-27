@@ -2279,6 +2279,10 @@ Readability.prototype = {
   }
 };
 
+if (typeof globalThis !== "undefined") {
+  globalThis.Readability = Readability;
+}
+
 if (typeof module === "object") {
   module.exports = Readability;
 }

@@ -1,5 +1,5 @@
 // 页面工具函数
-import { Note } from '../types';
+import type { Note } from '../types';
 
 /**
  * 格式化文本：将双换行转换为单换行，单换行转换为 <br />

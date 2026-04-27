@@ -11,7 +11,7 @@
       "~*": ["./*"]
     },
     "baseUrl": ".",
-    "jsx": "react-jsx",
+    "jsx": "react",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
