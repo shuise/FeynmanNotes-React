@@ -1,5 +1,7 @@
 # README
 
+a webpage note mark and download tool
+
 ## how to run
 ```bash
 npm install
