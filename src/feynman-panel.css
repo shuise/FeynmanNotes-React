@@ -1,0 +1,524 @@
+/* Panel styles rendered inside shadow root to avoid host page CSS leakage */
+
+.feynotes-wrapper {
+  all: initial;
+  display: block;
+  color: #333;
+  font-family: "Noto Sans", Arial, Verdana, sans-serif;
+  text-align: left;
+  user-select: none;
+  text-rendering: optimizeLegibility;
+}
+
+.feynotes-wrapper *,
+.feynotes-wrapper *::before,
+.feynotes-wrapper *::after {
+  box-sizing: border-box;
+  font-family: inherit;
+  color: inherit;
+}
+
+.feynotes-wrapper input[type="checkbox"],
+.feynotes-wrapper input[type="radio"] {
+  box-sizing: border-box;
+}
+
+.feynotes-wrapper a {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.feynotes-wrapper img {
+  display: block;
+  max-width: none;
+}
+
+.feynotes-wrapper button,
+.feynotes-wrapper input,
+.feynotes-wrapper select,
+.feynotes-wrapper textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.feynote-panel-fold {
+  position: fixed;
+  right: 5px;
+  bottom: 50px;
+  z-index: 999999999;
+}
+
+.feynote-button {
+  display: block;
+  background: #333 !important;
+  color: #fff !important;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.feynote-count {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  background: #cd0000;
+  color: #fff;
+  border-radius: 50%;
+  display: block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.feynotes {
+  width: 300px;
+  height: 95%;
+  position: fixed;
+  z-index: 999999999;
+  right: 10px;
+  top: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 5px;
+  overflow: hidden;
+  color: #333 !important;
+}
+
+.feynote-header input,
+.feynotes h2,
+.feynotes h2 a {
+  color: #333;
+  font-size: 16px !important;
+  padding: 10px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none !important;
+}
+
+.feynote-header {
+  display: block;
+}
+
+.feynote-header input {
+  width: 95%;
+  padding: 7px;
+  outline: none;
+  border: none;
+}
+
+.feynote-banner {
+  height: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.feynote-banner-text {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 5px 8px;
+}
+
+.feynote-logout,
+a.feynote-author {
+  color: #000;
+  -webkit-text-stroke: 0.5px #f5f5f5;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 700;
+  opacity: 0.8;
+  text-decoration: none !important;
+}
+
+.feynote-logout {
+  margin-left: 2rem;
+}
+
+.feynotes img {
+  width: 100% !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.feynotes img:hover {
+  top: -40px;
+  transition-property: top;
+  transition-duration: 3s;
+  transition-timing-function: ease-out;
+  animation-iteration-count: 1;
+}
+
+.feynote-item {
+  clear: both;
+  margin: 0 10px 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-top: 1px dotted #ccc;
+}
+
+.feynote-item-content {
+  background: #fff;
+  border-radius: 5px;
+  padding: 10px 0 0;
+  text-indent: 2rem;
+  position: relative;
+}
+
+.feynote-item-content:hover .feynote-item-card {
+  display: inline-block;
+}
+
+.feynote-item-card {
+  font-size: 26px;
+  display: none;
+  width: 40px;
+  height: 20px;
+  line-height: 1;
+  position: absolute;
+  left: -30px;
+  top: 5px;
+}
+
+.feynote-item-remark {
+  margin-left: 20px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 5px;
+  position: relative;
+  word-break: break-all;
+}
+
+.feynote-item-remark::before {
+  content: ".";
+  display: block;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  font-size: 0;
+  border: 10px solid #f5f5f5;
+  border-color: transparent transparent #f5f5f5 transparent;
+  position: absolute;
+  top: -20px;
+  left: 10px;
+}
+
+.feynote-main {
+  height: calc(100% - 180px);
+  min-height: 275px;
+  overflow: auto;
+  position: relative;
+}
+
+.feynote-main::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.feynote-main::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+.feynote-main::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #ccc;
+}
+
+.feynote-main::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #fff;
+}
+
+.feynote-tags {
+  padding: 5px 10px;
+  background: #fff;
+  width: 100%;
+  font-size: 14px;
+}
+
+.feynote-tags input {
+  width: 215px;
+  height: 30px;
+  font-size: 14px;
+  border: 1px solid #dedede;
+  text-indent: 3px;
+  outline: none;
+  padding: 0 6px;
+  background: #fff;
+}
+
+.feynote-tags input:focus {
+  background: #f5f5f5;
+}
+
+.feynote-foot {
+  background: #ccc;
+  padding: 8px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.feynote-foot::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}
+
+.feynote-foot a,
+.feynote-foot span.feynote-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-size: 14px !important;
+  line-height: 1.2;
+  color: rgba(255, 105, 0, 1) !important;
+  cursor: pointer;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.feynote-foot span.feynote-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feynote-login {
+  padding: 15px;
+  background: #fff;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.feynote-login .feynote-tags input {
+  width: 250px;
+}
+
+.feynote-login .feynote-button {
+  display: inline-block;
+  padding: 5px 20px;
+  margin-right: 20px;
+  text-align: center;
+}
+
+.feynote-books {
+  height: calc(100% - 77px);
+}
+
+.feynote-book-item {
+  margin: 5px;
+  padding: 5px;
+  border-top: 1px dotted #ccc;
+  color: #333;
+}
+
+.feynote-book-item:hover {
+  background: #f5f5f5;
+}
+
+.feynote-book-item h3 {
+  font-weight: 700;
+  font-size: 16px;
+  padding-top: 10px;
+}
+
+.feynote-book-item p {
+  font-size: 14px;
+  line-height: 2;
+}
+
+.feynote-book-item a,
+.feynote-book-item span {
+  font-size: 14px !important;
+  color: rgba(255, 105, 0, 1) !important;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.feynote-book-item-disable {
+  opacity: 0.2;
+}
+
+.feynote-topics {
+  padding-bottom: 20px;
+  padding-left: 60px;
+}
+
+.feynote-topics .feynote-label {
+  font-weight: 700;
+  font-size: 14px;
+  display: inline;
+  margin-left: -46px;
+}
+
+.feynote-topics label {
+  font-size: 14px;
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.feynote-topics .feynote-label span {
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.feyn-note-card {
+  border-radius: 15px;
+  line-height: 2;
+  font-size: 16px;
+  width: 480px;
+  color: #333;
+  text-align: left;
+}
+
+.feyn-note-card h2 {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1;
+  text-align: left;
+}
+
+.feyn-note-card p {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.feyn-note-card-time {
+  color: #999;
+  padding: 10px 0 20px;
+}
+
+.feyn-note-card img {
+  width: 100%;
+}
+
+.feyn-note-footer {
+  margin-top: 20px;
+  line-height: 1;
+  padding-left: 20px;
+}
+
+.feyn-note-card .feyn-note-footer img {
+  margin-right: 1rem;
+  vertical-align: middle;
+}
+
+.feyn-card-img-mask {
+  background: #000;
+  opacity: 0.4;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.feyn-card-img {
+  width: 480px;
+  max-height: 90%;
+  background: #fff;
+  border: 1px solid #f5f5f5;
+  border-radius: 15px;
+  overflow: auto;
+  position: fixed;
+  z-index: 9999999999999;
+  left: 20px;
+  top: 10px;
+  text-align: center;
+}
+
+.feynote-card-img::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.feynote-card-img::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+.feynote-card-img::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #ccc;
+}
+
+.feynote-card-img::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #fff;
+}
+
+.feyn-card-img img {
+  width: 478px;
+  display: block;
+  background: #fff;
+  border: 1px solid #fff;
+}
+
+.feyn-card-img-data {
+  background: #fff;
+  position: fixed;
+  left: 150px;
+  top: 100px;
+  z-index: 99999999999999;
+  width: 480px;
+  max-height: 600px;
+  overflow: auto;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 3px 3px 3px #ddd;
+}
+
+.feyn-card-img-data img {
+  width: 100%;
+}
+
+.feyn-card-img-creating {
+  line-height: 100px;
+  text-align: left;
+  font-size: 18px;
+  padding-left: 2rem;
+}
+
+.feyn-note-card-input {
+  position: relative;
+}
+
+.feynote-upload-image,
+.feynote-refresh-image {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #000;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.feynote-upload-image {
+  left: 0;
+  right: 50%;
+}
+
+.feynote-refresh-image {
+  left: 50%;
+  right: 0;
+}

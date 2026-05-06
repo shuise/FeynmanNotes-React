@@ -308,6 +308,7 @@ function Notes({ feynType: externalType, onTransPanel }: NotesProps) {
   })
 
   const articleRef = useRef(article)
+  const cardCanvasRef = useRef<HTMLDivElement | null>(null)
   const notesRef = useRef(notes)
   const tokenRef = useRef(token)
   const userInfoRef = useRef(userInfo)
@@ -1073,7 +1074,7 @@ function Notes({ feynType: externalType, onTransPanel }: NotesProps) {
   }
 
   const downloadCard = async () => {
-    const target = document.getElementById("feynCard")
+    const target = cardCanvasRef.current
     if (!target) {
       return
     }
@@ -1337,7 +1338,7 @@ function Notes({ feynType: externalType, onTransPanel }: NotesProps) {
             管理
           </a>
         ) : null}
-        <span className="feynote-btn" onClick={() => void transPanel("close")} style={{ marginLeft: "1rem" }}>
+        <span className="feynote-btn" onClick={() => void transPanel("close")}>
           收起
         </span>
       </div>
@@ -1613,7 +1614,7 @@ function Notes({ feynType: externalType, onTransPanel }: NotesProps) {
               关闭
             </span>
           </div>
-          <div className="feyn-note-card" id="feynCard" style={{ width: "480px" }}>
+          <div className="feyn-note-card" id="feynCard" ref={cardCanvasRef} style={{ width: "480px" }}>
             {card.styleType !== "3" ? (
               <div className="feyn-note-card-input">
                 <img

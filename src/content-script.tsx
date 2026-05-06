@@ -1,22 +1,88 @@
 import React from "./vendor/react-global"
 import { createRoot } from "./vendor/react-dom-global"
+import feynmanPanelCss from "./generated/feynman-panel-css"
 
 import Notes from "./notes"
 import { restoreLinks } from "./utils/tools"
 
+const HOST_ID = "feynotes-shadow-host"
 const ROOT_ID = "feynotes-wrapper"
+const RESET_STYLE_ID = "feynotes-shadow-reset-style"
+const SHADOW_CONTAINER_ID = "feynotes-shadow-root"
+
+const SHADOW_STYLE_RESET = `
+:host {
+  all: initial !important;
+}
+
+:host,
+:host * {
+  box-sizing: border-box;
+}
+
+#${SHADOW_CONTAINER_ID} {
+  all: initial;
+  display: block;
+  position: relative;
+  z-index: 2147483647;
+}
+
+#${SHADOW_CONTAINER_ID},
+#${SHADOW_CONTAINER_ID} * {
+  box-sizing: border-box;
+}
+
+${feynmanPanelCss}
+`
+
+function ensureShadowStyles(shadowRoot: ShadowRoot) {
+  let resetStyle = shadowRoot.getElementById(RESET_STYLE_ID) as HTMLStyleElement | null
+  if (!resetStyle) {
+    resetStyle = document.createElement("style")
+    resetStyle.id = RESET_STYLE_ID
+    resetStyle.textContent = SHADOW_STYLE_RESET
+    shadowRoot.prepend(resetStyle)
+  }
+}
 
 const getRootContainer = () => {
-  const existingRoot = document.getElementById(ROOT_ID)
-  if (existingRoot) {
+  const existingHost = document.getElementById(HOST_ID)
+  const existingShadowRoot = existingHost?.shadowRoot
+  const existingRoot = existingShadowRoot?.getElementById(ROOT_ID)
+  if (existingRoot instanceof HTMLElement && existingShadowRoot) {
+    ensureShadowStyles(existingShadowRoot)
     return existingRoot
   }
+
+  const shadowHost = document.createElement("feynotes-host")
+  shadowHost.id = HOST_ID
+  shadowHost.style.all = "initial"
+  shadowHost.style.position = "fixed"
+  shadowHost.style.inset = "0"
+  shadowHost.style.width = "100vw"
+  shadowHost.style.height = "100vh"
+  shadowHost.style.zIndex = "2147483647"
+  shadowHost.style.pointerEvents = "none"
+
+  const shadowRoot = shadowHost.attachShadow({ mode: "open" })
+
+  const shadowContainer = document.createElement("div")
+  shadowContainer.id = SHADOW_CONTAINER_ID
+  shadowContainer.style.width = "100%"
+  shadowContainer.style.height = "100%"
+  shadowContainer.style.pointerEvents = "none"
 
   const rootElement = document.createElement("div")
   rootElement.id = ROOT_ID
   rootElement.className = "feynotes-wrapper"
   rootElement.style.display = "block"
-  document.body.appendChild(rootElement)
+  rootElement.style.pointerEvents = "auto"
+
+  ensureShadowStyles(shadowRoot)
+  shadowContainer.appendChild(rootElement)
+  shadowRoot.appendChild(shadowContainer);
+  (document.body || document.documentElement).appendChild(shadowHost)
+
   return rootElement
 }
 
